@@ -4,196 +4,159 @@
 
 using namespace sf;
 
+const int width = 800;
+const int height = 500;
 
-/*
-class PLAYER {
+float horizontally = width / 2;
+float vertically = height / 2;
+
+float currentFrame1 = 0;
+float currentFrame2 = 0;
+float currentFrame3 = 0;
+
+Sprite ball;
+Sprite block1, block2, block3;
+
+class BLOCK1 {
 public:
-	float dx, dy;
-	FloatRect rect;
-	bool onGround;
-	Sprite sprite;
-	float  currentFrame;
-
-	PLAYER(Texture &image) {
-		sprite.setTexture(image);
-		rect = FloatRect(0, 0, 80, 80);
-
-		dx = dy = 0;
-		currentFrame = 0;
+	BLOCK1(Texture &image) {
+		block1.setTexture(image);
+		block1.setTextureRect(IntRect(26, 33, 55 - 26, 42 - 33));
 	}
-	*/
-/*
-	void update(float time) {
-		rect.left += dx*time;
-		if (!onGround) dy = dy + 0.0005*time;
-		rect.top += dy*time;
-		onGround = false;
-		if (rect.top > ground) { rect.top = ground; dy = 0; onGround = true; }
-
-		currentFrame += 0.005*time;
-		if (currentFrame > 4) currentFrame -= 4;
-
-		if (dx > 0) sprite.setTextureRect(IntRect(80 * int(currentFrame), 0, 80, 80));
-		if (dx<0) sprite.setTextureRect(IntRect(80 * int(currentFrame) + 80, 0, -80, 80));
-
-		sprite.setPosition(rect.left, rect.top);
-
-		dx = 0;
+	void move(float currentFrame1, int leftP1) {
+		block1.setPosition(currentFrame1, leftP1);
 	}
-*/
+};
 
-//};
+class BLOCK2 {
+public:
+	BLOCK2(Texture &image) {
+		block2.setTexture(image);
+		block2.setTextureRect(IntRect(26, 33, 55 - 26, 42 - 33));
+	}
+	void move(float currentFrame2, int leftP2) {
+		block2.setPosition(currentFrame2, leftP2);
+	}
+};
 
+class BLOCK3 {
+public:
+	BLOCK3(Texture &image) {
+		block3.setTexture(image);
+		block3.setTextureRect(IntRect(26, 33, 55 - 26, 42 - 33));
+	}
+	void move(float currentFrame3, int leftP3) {
+		block3.setPosition(currentFrame3, leftP3);
+	}
+};
 
-int main()
-{
-	float horizontally = 600/2;
-	float vertically = 400/2;
+class BALL {
+public:
+	BALL(Texture &image) {
+		ball.setTexture(image);
+		ball.setTextureRect(IntRect(0, 0, 25, 25));
+		ball.setPosition(width / 2 - 25, height / 2 - 25);
+	}
 
-	RenderWindow window(VideoMode(600, 400), "Whindow Game");
+	void impact(float horizontally, float vertically, int leftP1, int leftP2, int leftP3) {
+		if (((horizontally > currentFrame1) && (horizontally < currentFrame1 + 55)) && ((vertically > leftP1) && (vertically < leftP1 + 35))) {
+			system("pause");
+		}
+		if (((horizontally > currentFrame2) && (horizontally < currentFrame2 + 55)) && ((vertically > leftP2) && (vertically < leftP2 + 35))) {
+			system("pause");
+		}
+		if (((horizontally > currentFrame3) && (horizontally < currentFrame3 + 55)) && ((vertically > leftP3) && (vertically < leftP3 + 35))) {
+			system("pause");
+		}
+	}
+};
 
+int main() {
 
-	Texture te;
-	te.loadFromFile("Sprite.png");
+	RenderWindow window(VideoMode(width, height), "Window Game");
 
-	
+	Texture sprite;
+	sprite.loadFromFile("Sprite.png");
 
-	float currentFrame1 = 0;
-	float currentFrame2 = 0;
-	float currentFrame3 = 0;
+	BALL CBall(sprite);
+	BLOCK1 CBlock1(sprite);
+	BLOCK2 CBlock2(sprite);
+	BLOCK3 CBlock3(sprite);
 
-	
-	Sprite l1,l2,l3;//, r, t, b;
-	Sprite s;
-	s.setTexture(te);
-	s.setTextureRect(IntRect(0, 0, 25, 25));
-	s.setPosition(600/2, 400/2);
-
-	l1.setTexture(te);
-	l1.setTextureRect(IntRect(26, 0, 30, 9));
-
-	l2.setTexture(te);
-	l2.setTextureRect(IntRect(26, 22, 30, 9));
-
-	l3.setTexture(te);
-	l3.setTextureRect(IntRect(26, 33, 30, 9));
-	/*/
-	r.setTexture(te);
-	r.setTextureRect(IntRect(26, 0, 30, 9));
-
-	t.setTexture(te);
-	t.setTextureRect(IntRect(26, 0, 30, 9));
-
-	b.setTexture(te);
-	b.setTextureRect(IntRect(26, 0, 30, 9));
-	//b.setPosition(10,20);
-	*/
 	Clock clock;
 
+	int leftP1 = 300;
+	int leftP2 = 40;
+	int leftP3 = 180;
 
-	int left1 = 0;
-	int left2 = 0;
-	int left3 = 0;
+	srand(time(NULL));
+	Event event;
+	while (window.isOpen()) {
 
-
-
-	while (window.isOpen())
-	{ 
-		srand(time(NULL));
-
-		float timef = clock.getElapsedTime().asMicroseconds();
+		float time = clock.getElapsedTime().asMicroseconds();
 		clock.restart();
+		time = time / 250;
 
-		timef = timef / 250;
+		currentFrame1 += 0.05*time;
+		currentFrame2 += 0.04*time;
+		currentFrame3 += 0.07*time;
 
-		currentFrame1 += 0.05*timef; 
-		currentFrame2 += 0.09*timef; 
-		currentFrame3 += 0.07*timef; 
+		if (currentFrame1 < -25) leftP1 = 0 + rand() % height;
+		if (currentFrame1 > width) currentFrame1 = -30;
 
-		int rnd = 1 + rand() % 4;
+		if (currentFrame2 < -25) leftP2 = 0 + rand() % height;
+		if (currentFrame2 > width) currentFrame2 = -30;
 
+		if (currentFrame3 < -25) leftP3 = 0 + rand() % height;
+		if (currentFrame3 > width) currentFrame3 = -30;
 
-		if (currentFrame1 < 10) left1 = 5 + rand() % 390; 
-		if (currentFrame1 > 595) currentFrame1 = 0;
-
-		if (currentFrame2 < 10) left2 = 5 + rand() % 390;
-		if (currentFrame2 > 595) currentFrame2 = 0;
-
-		if (currentFrame3 < 10) left3 = 5 + rand() % 390;
-		if (currentFrame3 > 595) currentFrame3 = 0;
-
-		
-		
-
-		/*
-		l.setPosition(currentFrame, 10 + rand() % 550);
-		r.setPosition(currentFrame+=0.03, 10 + rand() % 550);
-		t.setPosition(currentFrame+=0.01, 10 + rand() % 550);
-		b.setPosition(currentFrame+=0.02, 10 + rand() % 550);
-		*/
-		/*
-		int left = 1 + rand() % 10;
-		int right = 1 + rand() % 10;
-		int top = 1 + rand() % 10;
-		int bot = 1 + rand() % 10;
-		*/
-
-		//system("pause");
-		
-
-		
-		l1.setPosition(currentFrame1, left1);
-		l2.setPosition(currentFrame2, left2);
-		l3.setPosition(currentFrame3, left3);
-		Event event;
-		while (window.pollEvent(event))
-		{
-			if (event.type == Event::Closed) 
-				window.close();	
+		while (window.pollEvent(event)) {
+			if (event.type == Event::Closed)
+				window.close();
 		}
 
+		CBall.impact(horizontally, vertically, leftP1, leftP2, leftP3);
+
+		CBlock1.move(currentFrame1, leftP1);
+		CBlock2.move(currentFrame2, leftP2);
+		CBlock3.move(currentFrame3, leftP3);
+
 		if (Keyboard::isKeyPressed(Keyboard::Left)) {
-			if (horizontally > 0) {
-				s.move(-0.1*timef, 0); 
-				horizontally -= 0.1*timef;
+			if (horizontally > 25) {
+				ball.move(-0.1*time, 0);
+				horizontally -= 0.1*time;
 			}
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Right)) {
-			if (horizontally < 575) {
-				s.move(0.1*timef, 0);
-				horizontally += 0.1*timef;
+			if (horizontally < width) {
+				ball.move(0.1*time, 0);
+				horizontally += 0.1*time;
 			}
-			
+
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Up)) {
-			if (vertically > 0) {
-				s.move(0, -0.1*timef);
-				vertically -= 0.1*timef;
+			if (vertically > 25) {
+				ball.move(0, -0.1*time);
+				vertically -= 0.1*time;
 			}
 		}
 		if (Keyboard::isKeyPressed(Keyboard::Down)) {
-			if (vertically < 375) {
-				s.move(0, 0.1*timef);
-				vertically += 0.1*timef;
+			if (vertically < height) {
+				ball.move(0, 0.1*time);
+				vertically += 0.1*time;
 			}
 		}
 
-		
-
-
-		
-		//l.move(0.15*timef, 0);
-
 		window.clear();
+		window.draw(ball);
 
-		window.draw(s);
+		window.draw(block1);
+		window.draw(block2);
+		window.draw(block3);
 
-		window.draw(l1);
-		window.draw(l2);
-		window.draw(l3);
-		
 		window.display();
 	}
+
 
 	return 0;
 }
